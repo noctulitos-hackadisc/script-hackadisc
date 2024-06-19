@@ -1,44 +1,44 @@
 # HACKADISC - LOS NOCTULITOS
 
-## Descripción
+## Description
 
-Este script de Python analiza un archivo dataset.xlsx para identificar compañías principales y subsidiarias. Luego, genera un archivo companies_and_subcompanies.xlsx que puede ser utilizado como seeder para una base de datos.
+This Python script analyzes a dataset.xlsx file to identify main companies and subsidiaries. It then generates a companies_and_subcompanies.xlsx file that can be used as a seeder for a database.
 
-## Requisitos
+## Requirements
 
 - Python 3.x
 - pandas
 - openpyxl
 
-## Instalación
+## Installation
 
-1. Clona este repositorio.
-2. Instala las dependencias con:
+1. Clone this repository.
+2. Install the dependencies with:
    bash
    pip install pandas openpyxl
    
 
-## Uso
+## Usage
 
-1. Asegúrate de tener el archivo dataset.xlsx en el mismo directorio que el script.
-2. Ejecuta el script:
+1. Ensure the dataset.xlsx file is in the same directory as the script.
+2. Run the script:
    bash
    python script.py
    
-3. Se generará el archivo companies_and_subcompanies.xlsx con las compañías principales y subsidiarias identificadas.
+3. The script will generate the companies_and_subcompanies.xlsx file with the identified main companies and subsidiaries.
 
-## Estructura del Dataset
+## Dataset Structure
 
-- *multicompanies*: Contiene información sobre compañías principales y subsidiarias.
-- *workers*: Contiene información sobre trabajadores y sus compañías.
+- *multicompanies*: Contains information about main companies and subsidiaries.
+- *workers*: Contains information about workers and their companies.
 
-## Salida
+## Output
 
-El script genera un archivo Excel con dos hojas:
+The script generates an Excel file with two sheets:
 
-- *Companies*: Compañías sin coincidencias en 'multicompanies'.
-- *SubCompanies*: Subsidiarias con coincidencias en 'sub_company_id'.
+- *Companies*: Main companies without matches in 'multicompanies'.
+- *SubCompanies*: Subsidiaries with matches in 'sub_company_id'.
 
-## Licencia
+## License
 
-Este proyecto está bajo la Licencia MIT.
+This project is licensed under the MIT License.
