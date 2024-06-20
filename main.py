@@ -10,7 +10,9 @@ workers_df = xl.parse('workers')
 companies = []
 subCompanies = []
 
-def export_dataframe_to_pdf(dataframes, file_name):
+posts = []
+
+def export_dataframe_to_excel(dataframes, file_name):
     output_file = f'./{file_name}.xlsx'
     with pd.ExcelWriter(output_file, engine='openpyxl') as writer:
         for dataframe in dataframes:
@@ -69,10 +71,39 @@ def upload_to_database(dataframe):
 
     print("DataFrame cargado exitosamente en la base de datos")
 
-export_dataframe_to_pdf(get_companies(), 'companies_and_subcompanies')
+# export_dataframe_to_pdf(get_companies(), 'companies_and_subcompanies')
 
-upload_to_database(get_companies()[0])
-upload_to_database(get_companies()[1])
+# upload_to_database(get_companies()[0])
+# upload_to_database(get_companies()[1])
 
+def get_posts():
+    seen_posts = set()  # Crear un conjunto para rastrear las combinaciones únicas de company_id y post_name
+    posts = []  # Inicializar la lista de posts
+
+    for index, worker_row in workers_df.iterrows():
+        post_entry = {
+            'post_id': index,
+            'company_id': worker_row['company_id'],
+            'post_name': worker_row['post_name']
+        }
+        
+        # Crear una tupla (company_id, post_name) para verificar unicidad
+        post_identifier = (worker_row['company_id'], worker_row['post_name'])
+        
+        if post_identifier not in seen_posts:
+            seen_posts.add(post_identifier)  # Agregar la tupla al conjunto
+            posts.append(post_entry)  # Agregar la entrada a la lista de posts
+
+    posts_df = pd.DataFrame(posts)
+    posts_df.name = 'Posts'
+    
+    print(posts_df)
+
+    return posts_df
+
+
+
+get_posts()
+export_dataframe_to_excel(get_posts(), 'posts')
 # contar cantidad de evaluaciones por cada usuario
 # iterar puestos de trabajo por cada empresa
