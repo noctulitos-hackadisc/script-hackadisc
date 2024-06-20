@@ -37,10 +37,15 @@ The script generates an Excel file with two sheets:
 - _Companies_: Main companies without matches in 'multicompanies'.
 - _SubCompanies_: Subsidiaries with matches in 'sub_company_id'.
 
+The script generates an Excel file with one sheet:
+
+- _Posts_
+
 The script generates data in a sqlite database called 'hackadisc':
 
 - _Companies_
 - _SubCompanies_
+- _Posts_
 
 ## License
 
