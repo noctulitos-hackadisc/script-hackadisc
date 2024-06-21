@@ -149,6 +149,15 @@ def get_users():
     
     return users_df
 
+def get_status():
+    status_data = {
+        'id': [1, 2, 3],
+        'name': ['EVALUADO', 'EN INTERVENCIÓN', 'INTERVENIDO']
+    }
+    status_df = pd.DataFrame(status_data)
+    
+    return status_df
+
 def upload_to_database(dataframe):
     engine = create_engine('sqlite:///hackadisc.db')
 
@@ -160,4 +169,5 @@ def upload_to_database(dataframe):
 # export_dataframe_to_excel(get_companies(), 'companies')
 # export_dataframe_to_excel(get_areas(), 'areas')
 # export_dataframe_to_excel(get_workers(), 'workers')
-export_dataframe_to_excel(get_users(), 'users')
+# export_dataframe_to_excel(get_users(), 'users')
+export_dataframe_to_excel(get_status(), 'status')
