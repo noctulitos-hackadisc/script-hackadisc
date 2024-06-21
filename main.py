@@ -110,6 +110,35 @@ def get_areas():
     
     return areas_df
 
+def get_workers():
+    posts_df = get_posts()
+    
+    workers_transformed = workers_df.copy()
+    
+    workers_transformed['id'] = range(1, len(workers_transformed) + 1)
+    
+    workers_transformed = workers_transformed.rename(columns={'user_name': 'name'})
+    
+    workers_transformed['status_id'] = 1
+    workers_transformed['evaluation_id'] = 0
+    
+    workers_transformed = workers_transformed.rename(columns={
+        'user_id': 'user_id',
+        'area_id': 'area_id',
+        'post_id': 'post_id',
+        'company_id': 'company_id'
+    })
+    
+    workers_transformed['post_id'] = workers_transformed.apply(
+        lambda row: posts_df[posts_df['name'] == row['post_name']]['id'].values[0],
+        axis=1
+    )
+    
+    workers_transformed = workers_transformed[['id', 'name', 'user_id', 'area_id', 'post_id', 'status_id', 'company_id', 'evaluation_id']]
+    
+    return workers_transformed
+    
+
 def upload_to_database(dataframe):
     engine = create_engine('sqlite:///hackadisc.db')
 
@@ -119,4 +148,5 @@ def upload_to_database(dataframe):
 
 # export_dataframe_to_excel(get_posts(), 'posts')
 # export_dataframe_to_excel(get_companies(), 'companies')
-export_dataframe_to_excel(get_areas(), 'areas')
+# export_dataframe_to_excel(get_areas(), 'areas')
+export_dataframe_to_excel(get_workers(), 'workers')
