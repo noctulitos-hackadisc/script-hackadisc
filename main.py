@@ -4,11 +4,11 @@ from sqlalchemy import create_engine
 file_path = './dataset.xlsx'
 xl = pd.ExcelFile(file_path)
 
-multicompanies_df = xl.parse('multicompanies')
 workers_df = xl.parse('workers')
+multicompanies_df = xl.parse('multicompanies')
+evaluations_df = xl.parse('evaluations')
 
 companies = []
-subCompanies = []
 
 posts = []
 
@@ -31,9 +31,9 @@ def get_posts():
 
     for index, worker_row in workers_df.iterrows():
         post_entry = {
-            'post_id': index,
+            'id': index,
             'company_id': worker_row['company_id'],
-            'post_name': worker_row['post_name']
+            'name': worker_row['post_name']
         }
         
         post_identifier = (worker_row['company_id'], worker_row['post_name'])
@@ -43,53 +43,65 @@ def get_posts():
             posts.append(post_entry)
 
     posts_df = pd.DataFrame(posts)
-    posts_df.name = 'Posts'
 
     return posts_df
 
 def get_companies():
-    for index, company_row in multicompanies_df.iterrows():
+    for _, worker_row in workers_df.iterrows():
         company_entry = {
-            'company_id': company_row['main_company_id'],
-            'company_name': company_row['main_company_name']
+            'id': worker_row['company_id'],
+            'name': worker_row['company_name'],
+            'worker_manager_id': '',
+            'company_manager_id': '',
+            'company_manager_name': ''
         }
-        if company_entry not in companies:
-            companies.append(company_entry)
-
-    for index, worker_row in workers_df.iterrows():
-        company_id = worker_row['company_id']
-        company_name = worker_row['company_name']
+        existing_company = next((company for company in companies if company['id'] == company_entry['id'] and company['name'] == company_entry['name']), None)
         
-        main_match = multicompanies_df[multicompanies_df['main_company_id'] == company_id]
-        sub_match = multicompanies_df[multicompanies_df['sub_company_id'] == company_id]
-        
-        if not main_match.empty:
-            continue
-        elif not sub_match.empty:
-            for sub_index, sub_row in sub_match.iterrows():
-                sub_company_entry = {
-                    'company_id': sub_row['main_company_id'],
-                    'sub_company_id': company_id,
-                    'company_name': sub_row['main_company_name'],
-                    'sub_company_name': sub_row['sub_company_name']
-                }
-                if sub_company_entry not in subCompanies:
-                    subCompanies.append(sub_company_entry)
+        if existing_company:
+            existing_company['id'] = company_entry['id']
+            existing_company['name'] = company_entry['name']
         else:
-            company_entry = {
-                'company_id': company_id,
-                'company_name': company_name
+            companies.append(company_entry)
+    
+    for _, multicompanies_row in multicompanies_df.iterrows():
+        main_id = multicompanies_row['main_company_id']
+        sub_id = multicompanies_row['sub_company_id']
+        main_name = multicompanies_row['main_company_name']
+        sub_name = multicompanies_row['sub_company_name']
+        
+        main_company = next((company for company in companies if company['id'] == main_id), None)
+        
+        if not main_company:
+            main_company = {
+                'id': main_id,
+                'name': main_name,
+                'worker_manager_id': '',
+                'company_manager_id': '',
+                'company_manager_name': ''
             }
-            if company_entry not in companies:
-                companies.append(company_entry)
-
+            companies.append(main_company)
+        
+        sub_company_entry = {
+            'id': sub_id,
+            'name': sub_name,
+            'worker_manager_id': '',
+            'company_manager_id': main_id,
+            'company_manager_name': main_name
+        }
+        existing_subcompany = next((company for company in companies if company['id'] == sub_id and company['name'] == sub_name), None)
+        
+        if existing_subcompany:
+            existing_subcompany['id'] = sub_id
+            existing_subcompany['name'] = sub_name
+            existing_subcompany['company_manager_id'] = main_id
+            existing_subcompany['company_manager_name'] = main_name
+        else:
+            companies.append(sub_company_entry)
+    
     companies_df = pd.DataFrame(companies)
-    subCompanies_df = pd.DataFrame(subCompanies)
+    companies_df = companies_df.sort_values(by='id', ascending=True).reset_index(drop=True)
     
-    companies_df.name = 'Companies'
-    subCompanies_df.name = 'SubCompanies'
-    
-    return companies_df, subCompanies_df
+    return companies_df
 
 def upload_to_database(dataframe):
     engine = create_engine('sqlite:///hackadisc.db')
@@ -99,10 +111,4 @@ def upload_to_database(dataframe):
     print("DataFrame cargado exitosamente en la base de datos")
 
 export_dataframe_to_excel(get_posts(), 'posts')
-export_dataframe_to_excel(get_companies(), 'companies_and_subcompanies')
-
-upload_to_database(get_posts())
-upload_to_database(get_companies()[0])
-upload_to_database(get_companies()[1])
-
-# TODO: contar cantidad de evaluaciones por cada usuario
+export_dataframe_to_excel(get_companies(), 'companies')
