@@ -103,6 +103,13 @@ def get_companies():
     
     return companies_df
 
+def get_areas():
+    areas_df = workers_df.copy()
+    areas_df['area_name'] = areas_df['area_name'].str.upper()
+    areas_df = areas_df[['area_id', 'area_name', 'company_id']].drop_duplicates(['company_id', 'area_name'])
+    
+    return areas_df
+
 def upload_to_database(dataframe):
     engine = create_engine('sqlite:///hackadisc.db')
 
@@ -110,5 +117,6 @@ def upload_to_database(dataframe):
 
     print("DataFrame cargado exitosamente en la base de datos")
 
-export_dataframe_to_excel(get_posts(), 'posts')
-export_dataframe_to_excel(get_companies(), 'companies')
+# export_dataframe_to_excel(get_posts(), 'posts')
+# export_dataframe_to_excel(get_companies(), 'companies')
+export_dataframe_to_excel(get_areas(), 'areas')
