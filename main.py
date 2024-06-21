@@ -137,7 +137,17 @@ def get_workers():
     workers_transformed = workers_transformed[['id', 'name', 'user_id', 'area_id', 'post_id', 'status_id', 'company_id', 'evaluation_id']]
     
     return workers_transformed
+
+def get_users():
+    users_data = {
+        'id': [1, 2, 3],
+        'email': ['admin@example.com', 'chief@example.com', 'manager@example.com'],
+        'password': ['admin_password', 'chief_password', 'manager_password'],
+        'role': ['ADMINISTRATOR', 'AREA_CHIEF', 'MANAGER']
+    }
+    users_df = pd.DataFrame(users_data)
     
+    return users_df
 
 def upload_to_database(dataframe):
     engine = create_engine('sqlite:///hackadisc.db')
@@ -149,4 +159,5 @@ def upload_to_database(dataframe):
 # export_dataframe_to_excel(get_posts(), 'posts')
 # export_dataframe_to_excel(get_companies(), 'companies')
 # export_dataframe_to_excel(get_areas(), 'areas')
-export_dataframe_to_excel(get_workers(), 'workers')
+# export_dataframe_to_excel(get_workers(), 'workers')
+export_dataframe_to_excel(get_users(), 'users')
