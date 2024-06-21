@@ -120,7 +120,7 @@ def get_workers():
     workers_transformed = workers_transformed.rename(columns={'user_name': 'name'})
     
     workers_transformed['status_id'] = 1
-    workers_transformed['evaluation_id'] = 0
+    # workers_transformed['evaluation_id'] = 0
     
     workers_transformed = workers_transformed.rename(columns={
         'user_id': 'user_id',
@@ -158,6 +158,15 @@ def get_status():
     
     return status_df
 
+def get_evaluations():
+    # Copiar el dataframe original para no modificar el original
+    evaluations_transformed = evaluations_df.copy()
+    
+    # Agregar un ID autoincremental
+    evaluations_transformed['id'] = range(1, len(evaluations_transformed) + 1)
+    
+    return evaluations_transformed
+
 def upload_to_database(dataframe):
     engine = create_engine('sqlite:///hackadisc.db')
 
@@ -170,4 +179,5 @@ def upload_to_database(dataframe):
 # export_dataframe_to_excel(get_areas(), 'areas')
 # export_dataframe_to_excel(get_workers(), 'workers')
 # export_dataframe_to_excel(get_users(), 'users')
-export_dataframe_to_excel(get_status(), 'status')
+# export_dataframe_to_excel(get_status(), 'status')
+export_dataframe_to_excel(get_evaluations(), 'evaluations')
